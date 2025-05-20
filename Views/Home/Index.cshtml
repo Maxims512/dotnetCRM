@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Главная страница";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <partial name="~/Views/Shared/Users/UserList.cshtml" model="Model.Users" />
+    </div>
+    <div class="col-md-6">
+        <partial name="~/Views/Shared/Orders/OrderList.cshtml" model="Model.Orders" />
+    </div>
+</div>
