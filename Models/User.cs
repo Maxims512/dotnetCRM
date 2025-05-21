@@ -8,17 +8,18 @@ namespace MvcApp.Models
 
         [Required]
         [Display(Name = "ФИО")]
-        public string? FullName { get; set; } 
+        public string? FullName { get; set; }
+
+        private DateTime _birthDate;
 
         [Required]
         [Display(Name = "Дата рождения")]
         [DataType(DataType.Date)]
-        private DateTime _birthDate;
-
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime BirthDate
         {
-            get => _birthDate;
-            set => _birthDate = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+            get => _birthDate.Date;  // Всегда возвращаем только дату
+            set => _birthDate = value.Date;  // Обрезаем время
         }
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();

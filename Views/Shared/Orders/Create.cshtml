@@ -1,45 +1,40 @@
 @model Order
 
-@{
-    ViewData["Title"] = "Создание заказа";
-}
-
-<h2>@ViewData["Title"]</h2>
-
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <!-- Остальные поля формы -->
-            
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                @if (ViewBag.Users != null)
-                {
-                    <select asp-for="UserId" class="form-control" 
-                            asp-items="@(ViewBag.Users as SelectList)">
-                        <option value="">-- Выберите пользователя --</option>
-                    </select>
-                }
-                else
-                {
-                    <div class="alert alert-warning">
-                        Нет доступных пользователей. 
-                        <a asp-controller="Users" asp-action="Create">Создайте сначала пользователя</a>.
-                    </div>
-                }
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> Создать
-                </button>
-                <a asp-action="Index" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Назад
-                </a>
-            </div>
-        </form>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+    <div class="form-group">
+        <label asp-for="Price" class="control-label"></label>
+        <input asp-for="Price" class="form-control" 
+               required
+               min="0.01"
+               step="0.01"/>
+        <span asp-validation-for="Price" class="text-danger"></span>
     </div>
-</div>
+    
+    <div class="form-group">
+        <label asp-for="OrderDate" class="control-label"></label>
+        <input asp-for="OrderDate" type="date" class="form-control" 
+               required
+               max="@DateTime.Today.ToString("yyyy-MM-dd")"/>
+        <span asp-validation-for="OrderDate" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="UserId" class="control-label"></label>
+        <select asp-for="UserId" class="form-control" 
+                asp-items="ViewBag.Users" required>
+            <option value="">-- Select User --</option>
+        </select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group d-flex justify-content-between"></div>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Назад
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Создать
+        </button>
+    </div>
+</form>

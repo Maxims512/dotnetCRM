@@ -13,33 +13,57 @@ public class OrdersController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var orders = await _context.Orders.Include(o => o.User).ToListAsync();
-        return View("~/Views/Shared/Orders/Index.cshtml", orders);
+        var orders = _context.Orders.Include(o => o.User).ToList();
+        return View("~/Views/Shared/Orders/OrderList.cshtml", orders);
     }
 
+    [HttpGet]
     public IActionResult Create()
     {
-        ViewBag.Users = new SelectList(_context.Users.ToList(), "Id", "FullName");
+        var users = _context.Users
+            .Select(u => new { u.Id, u.FullName })
+            .ToList();
+        
+        if (users == null || !users.Any())
+        {
+            ViewBag.NoUsers = true;
+        }
+        else
+        {
+            ViewBag.Users = new SelectList(users, "Id", "FullName");
+        }
+        
         return View("~/Views/Shared/Orders/Create.cshtml");
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Price,OrderDate,UserId")] Order order)
+    public async Task<IActionResult> Create(Order order)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(order);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                _context.Add(order);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Заказ успешно создан!";
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Ошибка при создании заказа: {ex.Message}");
+            }
         }
-        
-        ViewBag.Users = new SelectList(_context.Users.ToList(), "Id", "FullName", order.UserId);
-        return View("~/Views/Shared/Orders/Create.cshtml", order);
-    }
 
+        var users = _context.Users
+            .Select(u => new { u.Id, u.FullName })
+            .ToList();
+        
+        ViewBag.Users = users != null ? new SelectList(users, "Id", "FullName") : null;
+        
+        return View(order);
+    }
     
     [HttpGet]
     public async Task<IActionResult> Edit(int? id)
@@ -64,7 +88,6 @@ public class OrdersController : Controller
     }
     
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, Order order)
     {
         if (id != order.Id) return NotFound();
@@ -92,23 +115,7 @@ public class OrdersController : Controller
         return View("~/Views/Shared/Orders/Edit.cshtml", order);
     }
 
-    
-    public async Task<IActionResult> Delete(int? id)
-    {
-        if (id == null) return NotFound();
-
-        var order = await _context.Orders
-            .Include(o => o.User)
-            .FirstOrDefaultAsync(m => m.Id == id);
-
-        if (order == null) return NotFound();
-
-        return View("~/Views/Shared/Orders/Delete.cshtml", order);
-    }
-
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         var order = await _context.Orders.FindAsync(id);
         if (order != null)

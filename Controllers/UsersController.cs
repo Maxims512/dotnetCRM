@@ -1,4 +1,3 @@
-// Controllers/UsersController.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MvcApp.Data;
@@ -13,22 +12,27 @@ public class UsersController : Controller
         _context = context;
     }
 
-    // GET: Users
     public async Task<IActionResult> Index()
     {
-        return View("~/Views/Shared/Users/UserList.cshtml", 
+        var users = await _context.Users.ToListAsync();
+    
+        // Для отладки - выводим данные в консоль сервера
+        foreach (var user in users)
+        {
+            Console.WriteLine($"User: {user.FullName}, BirthDate: {user.BirthDate:dd.MM.yyyy}");
+        }
+        return View("~/Views/Shared/Users/UserList.cshtml",
                await _context.Users.ToListAsync());
+        
     }
 
-    // GET: Users/Create
+
     public IActionResult Create()
     {
         return View("~/Views/Shared/Users/Create.cshtml");
     }
 
-    // POST: Users/Create
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("FullName,BirthDate")] User user)
     {
         if (ModelState.IsValid)
@@ -40,7 +44,6 @@ public class UsersController : Controller
         return View("~/Views/Shared/Users/Create.cshtml", user);
     }
 
-    // GET: Users/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null) return NotFound();
@@ -51,13 +54,13 @@ public class UsersController : Controller
         return View("~/Views/Shared/Users/Edit.cshtml", user);
     }
 
-    // POST: Users/Edit/5
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,BirthDate")] User user)
     {
+        Console.WriteLine($"Получена дата из формы: {user.BirthDate:yyyy-MM-dd}");
+        Console.WriteLine($"Дата после .Date: {user.BirthDate.Date:yyyy-MM-dd}");
         if (id != user.Id) return NotFound();
-
+        user.BirthDate = user.BirthDate.Date;
         if (ModelState.IsValid)
         {
             try
@@ -70,33 +73,15 @@ public class UsersController : Controller
                 if (!UserExists(user.Id)) return NotFound();
                 throw;
             }
+            var savedUser = await _context.Users.FindAsync(id);
+            Console.WriteLine($"Дата после сохранения: {savedUser.BirthDate:yyyy-MM-dd}");
             return RedirectToAction("Index", "Home");
         }
         return View("~/Views/Shared/Users/Edit.cshtml", user);
     }
 
-
-    public async Task<IActionResult> Delete(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var user = await _context.Users
-            .FirstOrDefaultAsync(m => m.Id == id);
-            
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        return View("~/Views/Shared/Users/Delete.cshtml", user);
-    }
-
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
     {
         var user = await _context.Users.FindAsync(id);
         if (user != null)
@@ -104,8 +89,8 @@ public class UsersController : Controller
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
-        
-        return RedirectToAction(nameof(Index));
+
+        return RedirectToAction("Index", "Home");
     }
 
     private bool UserExists(int id)

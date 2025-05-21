@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using MvcApp.Data;
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -5,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Добавляем сервисы в контейнер
 builder.Services.AddControllersWithViews();
+
+
 
 // Настройка подключения к PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

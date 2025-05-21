@@ -1,5 +1,3 @@
-// Models/HomeIndexViewModel.cs
-using System.Collections.Generic;
 using MvcApp.Models;
 
 public class HomeIndexViewModel
