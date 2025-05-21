@@ -1,3 +1,4 @@
+@using System.Globalization
 @model IEnumerable<Order>
 
 <div class="table-responsive">
@@ -14,7 +15,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Price.ToString("C")</td>
+                    <td>@item.Price.ToString("C", CultureInfo.GetCultureInfo("ru-RU"))</td>
                     <td>@item.OrderDate.ToString("dd.MM.yyyy")</td>
                     <td>
                         @if (item.User != null)
@@ -27,16 +28,17 @@
                         }
                     </td>
                     <td>
-                        <div class="btn-group" role="group">
-                            <a asp-action="Edit" asp-controller="Orders" asp-route-id="@item.Id" 
-                               class="btn btn-sm btn-primary" title="Редактировать">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a asp-action="Delete" asp-controller="Orders" asp-route-id="@item.Id" 
-                               class="btn btn-sm btn-danger" title="Удалить">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
-                        </div>
+                         <a asp-action="Edit" asp-controller="Orders" asp-route-id="@item.Id" 
+                           class="btn btn-sm btn-primary">
+                           <i class="fas fa-edit"></i> Изменить
+                        </a>
+                        
+                        <form asp-action="Delete" asp-controller="Orders" asp-route-id="@item.Id" 
+                              method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash-alt"></i> Удалить
+                            </button>
+                        </form>
                     </td>
                 </tr>
             }
