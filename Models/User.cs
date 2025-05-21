@@ -18,8 +18,8 @@ namespace MvcApp.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime BirthDate
         {
-            get => _birthDate.Date;  // Всегда возвращаем только дату
-            set => _birthDate = value.Date;  // Обрезаем время
+            get => _birthDate.Date;  
+            set => _birthDate = value.Date;  
         }
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();

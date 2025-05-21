@@ -17,17 +17,15 @@
                     
                     <td>@item.BirthDate.ToString("dd.MM.yyyy")</td>
                     <td>
-                        <!-- Кнопка редактирования -->
                         <a asp-action="Edit" asp-controller="Users" asp-route-id="@item.Id" 
                            class="btn btn-sm btn-primary">
-                           <i class="fas fa-edit"></i> Edit
+                           <i class="fas fa-edit"></i> Изменить
                         </a>
                         
-                        <!-- Кнопка удаления -->
                         <form asp-action="Delete" asp-controller="Users" asp-route-id="@item.Id" 
                               method="post" class="d-inline">
                             <button type="submit" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash-alt"></i> Delete
+                                <i class="fas fa-trash-alt"></i> Удалить
                             </button>
                         </form>
                     </td>
@@ -36,20 +34,9 @@
         </tbody>
     </table>
 
-    <!-- Кнопка создания нового пользователя -->
     <div class="mt-3">
         <a asp-action="Create" asp-controller="Users" class="btn btn-success">
             <i class="fas fa-user-plus"></i> Создать нового пользователя
         </a>
     </div>
 </div>
-
-@section Styles {
-    <style>
-        /* Дополнительные стили для кнопок */
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-    </style>
-}

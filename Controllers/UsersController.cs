@@ -14,13 +14,6 @@ public class UsersController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var users = await _context.Users.ToListAsync();
-    
-        // Для отладки - выводим данные в консоль сервера
-        foreach (var user in users)
-        {
-            Console.WriteLine($"User: {user.FullName}, BirthDate: {user.BirthDate:dd.MM.yyyy}");
-        }
         return View("~/Views/Shared/Users/UserList.cshtml",
                await _context.Users.ToListAsync());
         
@@ -57,8 +50,6 @@ public class UsersController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,BirthDate")] User user)
     {
-        Console.WriteLine($"Получена дата из формы: {user.BirthDate:yyyy-MM-dd}");
-        Console.WriteLine($"Дата после .Date: {user.BirthDate.Date:yyyy-MM-dd}");
         if (id != user.Id) return NotFound();
         user.BirthDate = user.BirthDate.Date;
         if (ModelState.IsValid)
@@ -74,7 +65,6 @@ public class UsersController : Controller
                 throw;
             }
             var savedUser = await _context.Users.FindAsync(id);
-            Console.WriteLine($"Дата после сохранения: {savedUser.BirthDate:yyyy-MM-dd}");
             return RedirectToAction("Index", "Home");
         }
         return View("~/Views/Shared/Users/Edit.cshtml", user);

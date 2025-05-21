@@ -1,4 +1,3 @@
-// Data/ApplicationDbContext.cs
 using Microsoft.EntityFrameworkCore;
 using MvcApp.Models;
 
@@ -16,7 +15,6 @@ namespace MvcApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Конфигурация связи между User и Order
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)
                 .WithMany(u => u.Orders)
